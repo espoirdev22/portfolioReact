@@ -1,0 +1,31 @@
+{
+    "projets": [
+      {
+        "id": 1,
+        "libelle": "Application E-Commerce",
+        "description": "Plateforme de vente en ligne...",
+        "image": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=300&fit=crop",
+        "technologie": "React, Node.js, MongoDB",
+        "dateDebut": "2024-01-15",
+        "statut": "Terminé"
+      },
+      {
+        "id": 2,
+        "libelle": "Dashboard Analytics",
+        "description": "Tableau de bord interactif...",
+        "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=300&fit=crop",
+        "technologie": "Vue.js, D3.js, Firebase",
+        "dateDebut": "2024-03-20",
+        "statut": "En cours"
+      },
+      {
+        "id": 3,
+        "libelle": "Application Mobile Fitness",
+        "description": "App de suivi d'entraînements...",
+        "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
+        "technologie": "React Native, Redux, REST API",
+        "dateDebut": "2024-05-10",
+        "statut": "En cours"
+      }
+    ]
+  }
