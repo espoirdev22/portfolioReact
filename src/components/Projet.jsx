@@ -10,11 +10,11 @@ import React from 'react' // Import React obligatoire pour utiliser JSX
    - onSupprimer {Function} : callback appelé avec l'id pour supprimer
    - onDetail    {Function} : callback appelé avec le projet pour voir le détail
 ------------------------------------------------------------------ */
-function Projet({ projet, onSupprimer, onDetail }) {
+function Projet({ projet, onSupprimer, onDetail, isAdmin }) {
 
   // Classe CSS dynamique du badge statut selon la valeur du champ statut
   const badgeClass = projet.statut === 'terminé'
-  ? 'status-badge done'  // Vert pour Terminé
+    ? 'status-badge done'  // Vert pour Terminé
     : 'status-badge wip'   // Orange pour En cours
 
   return (
@@ -63,12 +63,14 @@ function Projet({ projet, onSupprimer, onDetail }) {
         </span>
 
         {/* Bouton Supprimer — déclenche la suppression via le composant parent Dossier */}
-        <button
-          className="btn btn-danger"
-          onClick={() => onSupprimer(projet._id)}  // Passe uniquement l'id, pas l'objet entier
-        >
-          🗑 Supprimer
-        </button>
+        {isAdmin && (
+          <button
+            className="btn btn-danger"
+            onClick={() => onSupprimer(projet._id)}
+          >
+            🗑 Supprimer
+          </button>
+        )}
       </div>
 
     </article>

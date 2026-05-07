@@ -1,3 +1,4 @@
+const getToken = () => localStorage.getItem('token')
 // projetService.js
 // Couche SERVICE : abstraction de tous les appels à l'API REST (json-server)
 // Centralise la logique réseau — les composants n'utilisent que ces fonctions
@@ -59,7 +60,8 @@ export const createProjet = async (data) => {
   const response = await fetch(BASE_URL, {
     method: 'POST',                              // Méthode HTTP POST = création
     headers: {
-      'Content-Type': 'application/json'         // Indique qu'on envoie du JSON
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getToken()}`
     },
     body: JSON.stringify(data)                   // Sérialise l'objet en chaîne JSON
   })
@@ -85,7 +87,8 @@ export const updateProjet = async (id, data) => {
   const response = await fetch(`${BASE_URL}/${id}`, {
     method: 'PUT',                               // PUT = remplacement complet (vs PATCH = partiel)
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getToken()}`
     },
     body: JSON.stringify(data)
   })
@@ -107,7 +110,10 @@ export const updateProjet = async (id, data) => {
 ------------------------------------------------------------------ */
 export const deleteProjet = async (id) => {
   const response = await fetch(`${BASE_URL}/${id}`, {
-    method: 'DELETE'                             // DELETE = suppression de la ressource
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${getToken()}`
+    }
   })
 
   if (!response.ok) {

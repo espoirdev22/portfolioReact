@@ -11,7 +11,7 @@ import React, { useState } from 'react' // useState : pour gérer le mode éditi
    - onEditer  {Function} : reçoit les données mises à jour après édition
    - onSupprimer {Function}: supprime le projet depuis la vue détail
 ------------------------------------------------------------------ */
-function DetaillerProjet({ projet, onAnnuler, onEditer, onSupprimer }) {
+function DetaillerProjet({ projet, onAnnuler, onEditer, onSupprimer, isAdmin }) {
 
   // enEdition : bascule entre mode lecture et mode formulaire d'édition
   // false = on affiche les infos | true = on affiche le formulaire
@@ -183,20 +183,16 @@ function DetaillerProjet({ projet, onAnnuler, onEditer, onSupprimer }) {
           </button>
 
           {/* Bouton ÉDITER : bascule en mode formulaire d'édition inline */}
-          <button
-            className="btn btn-edit"
-            onClick={() => setEnEdition(true)}    // Change le state local enEdition
-          >
-            ✎ Éditer
-          </button>
-
-          {/* Bouton SUPPRIMER accessible depuis la vue détail */}
-          <button
-            className="btn btn-danger"
-            onClick={() => onSupprimer(projet.id)}
-          >
-            🗑 Supprimer
-          </button>
+          {isAdmin && (
+            <button className="btn btn-edit" onClick={() => setEnEdition(true)}>
+              ✎ Éditer
+            </button>
+          )}
+          {isAdmin && (
+            <button className="btn btn-danger" onClick={() => onSupprimer(projet._id)}>
+              🗑 Supprimer
+            </button>
+          )}
         </div>
       </div>
 
@@ -224,8 +220,8 @@ function DetaillerProjet({ projet, onAnnuler, onEditer, onSupprimer }) {
             {projet.dateDebut
               // Formate la date ISO (2024-01-15) en format lisible français
               ? new Date(projet.dateDebut).toLocaleDateString('fr-FR', {
-                  day: '2-digit', month: 'long', year: 'numeric'
-                })
+                day: '2-digit', month: 'long', year: 'numeric'
+              })
               : '—'}
           </p>
         </div>

@@ -1,4 +1,4 @@
- // Dossier.jsx
+// Dossier.jsx
 // Composant GESTIONNAIRE PRINCIPAL de l'application
 // Responsabilités :
 //   1. Stocker et gérer la liste des projets dans son state (source de vérité)
@@ -10,8 +10,8 @@
 import React, { useState, useEffect } from 'react'
 
 // Import des composants enfants
-import Projet          from './Projet.jsx'           // Carte d'un projet
-import AjouterProjet   from './AjouterProjet.jsx'    // Formulaire d'ajout
+import Projet from './Projet.jsx'           // Carte d'un projet
+import AjouterProjet from './AjouterProjet.jsx'    // Formulaire d'ajout
 import DetaillerProjet from './DetaillerProjet.jsx'  // Vue détail
 
 // Import de toutes les fonctions du service API
@@ -50,12 +50,41 @@ function Dossier() {
 
   // toast : message de confirmation temporaire (ex: "Projet ajouté ✓")
   const [toast, setToast] = useState('')
-
+  // Après les autres useState
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [motDePasse, setMotDePasse] = useState('')
+  const [loginErreur, setLoginErreur] = useState('')
   /* ========================================================
      CHARGEMENT INITIAL DES PROJETS
      useEffect avec [] = exécuté UNE SEULE FOIS après le premier rendu
      Équivalent du componentDidMount dans les composants classes
   ======================================================== */
+  const login = async () => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: motDePasse })
+      })
+      const data = await res.json()
+      if (data.success) {
+        localStorage.setItem('token', data.token)
+        setIsAdmin(true)
+        setLoginErreur('')
+        afficherToast('Connecté en tant qu\'admin ✓')
+      } else {
+        setLoginErreur('Mot de passe incorrect')
+      }
+    } catch (err) {
+      setLoginErreur('Erreur de connexion')
+    }
+  }
+
+  const logout = () => {
+    localStorage.removeItem('token')
+    setIsAdmin(false)
+    afficherToast('Déconnecté ✓')
+  }
   useEffect(() => {
     chargerProjets() // Appel asynchrone au montage du composant
   }, []) // Tableau de dépendances vide = effet exécuté une seule fois
@@ -161,7 +190,7 @@ function Dossier() {
   const projetsFiltres = projets.filter(p => {
     const terme = recherche.toLowerCase()
     return (
-      (p.titre     && p.titre.toLowerCase().includes(terme)) ||
+      (p.titre && p.titre.toLowerCase().includes(terme)) ||
       (p.description && p.description.toLowerCase().includes(terme)) ||
       (p.technologie && p.technologies.toLowerCase().includes(terme))
     )
@@ -171,8 +200,8 @@ function Dossier() {
      TITRE DYNAMIQUE selon la vue active
   ======================================================== */
   const titresVue = {
-    liste:  `Portfolio (${projetsFiltres.length})`,
-    ajout:  'Nouveau Projet',
+    liste: `Portfolio (${projetsFiltres.length})`,
+    ajout: 'Nouveau Projet',
     detail: projetActif ? projetActif.titre : 'Détail'
   }
 
@@ -221,7 +250,8 @@ function Dossier() {
       case 'detail':
         return (
           <DetaillerProjet
-            projet={projetActif}                   // Projet à afficher
+            projet={projetActif} 
+            isAdmin={isAdmin}                  // Projet à afficher
             onAnnuler={() => {                     // Ferme le détail
               setVue('liste')
               setProjetActif(null)
@@ -230,7 +260,32 @@ function Dossier() {
             onSupprimer={supprimerProjet}          // Supprime depuis le détail
           />
         )
-
+      case 'login':
+        return (
+          <div className="form-view">
+            <div className="accent-line"></div>
+            <h2 className="form-section-title">CONNEXION ADMIN</h2>
+            <div className="form-group">
+              <label>Mot de passe</label>
+              <input
+                type="password"
+                value={motDePasse}
+                onChange={e => setMotDePasse(e.target.value)}
+                placeholder="Entrez le mot de passe admin"
+                onKeyDown={e => e.key === 'Enter' && login()}
+              />
+            </div>
+            {loginErreur && <p style={{ color: '#ff4d4d' }}>{loginErreur}</p>}
+            <div className="form-actions">
+              <button className="btn btn-primary" onClick={login}>
+                🔐 Se connecter
+              </button>
+              <button className="btn btn-ghost" onClick={() => setVue('liste')}>
+                Annuler
+              </button>
+            </div>
+          </div>
+        )
       // Vue liste par défaut : grille de toutes les cartes projets
       default:
         return projetsFiltres.length === 0 ? (
@@ -258,10 +313,11 @@ function Dossier() {
               // key : prop obligatoire pour que React identifie chaque élément
               // Permet au Virtual DOM de faire les mises à jour efficacement
               <Projet
-                key={projet.id}
+                key={projet._id}
                 projet={projet}
+                isAdmin={isAdmin}
                 onSupprimer={supprimerProjet}
-                onDetail={p => {                  // Sélectionne le projet et affiche le détail
+                onDetail={p => {
                   setProjetActif(p)
                   setVue('detail')
                 }}
@@ -319,13 +375,26 @@ function Dossier() {
         </button>
 
         {/* Navigation : vers le formulaire d'ajout */}
-        <button
-          className="btn btn-primary"
-          style={{ width: '100%', justifyContent: 'center' }}
-          onClick={() => setVue('ajout')}
-        >
-          ＋ Nouveau projet
-        </button>
+        {isAdmin && (
+          <button
+            className="btn btn-primary"
+            style={{ width: '100%', justifyContent: 'center' }}
+            onClick={() => setVue('ajout')}
+          >
+            ＋ Nouveau projet
+          </button>
+        )}
+        {!isAdmin ? (
+          <button className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }}
+            onClick={() => setVue('login')}>
+            🔐 Admin
+          </button>
+        ) : (
+          <button className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }}
+            onClick={logout}>
+            🚪 Déconnexion
+          </button>
+        )}
 
       </aside>
 
@@ -358,7 +427,7 @@ function Dossier() {
           )}
 
           {/* Bouton Ajouter dans la topbar — visible en vue liste uniquement */}
-          {vue === 'liste' && (
+          {vue === 'liste' && isAdmin && (
             <button className="btn btn-primary" onClick={() => setVue('ajout')}>
               ＋ Ajouter
             </button>
