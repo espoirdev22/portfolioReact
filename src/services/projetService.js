@@ -7,7 +7,9 @@
 // Grâce au proxy Vite, /api/projets → http://localhost:3001/projets
 //const BASE_URL = 'http://host.docker.internal:3000/api/projects'
 //const BASE_URL = 'http://api:3000/api/projects'
-const BASE_URL = 'http://192.168.84.11:3000/api/projects'
+//const BASE_URL = 'http://192.168.84.11:3000/api/projects'
+const BASE_URL = 'https://portfolioapi-production-fa14.up.railway.app/api/projects'
+
 
 
 /* ------------------------------------------------------------------
