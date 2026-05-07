@@ -5,7 +5,10 @@
 
 // URL de base de l'API
 // Grâce au proxy Vite, /api/projets → http://localhost:3001/projets
-const BASE_URL = 'http://localhost:3001/projets'
+//const BASE_URL = 'http://host.docker.internal:3000/api/projects'
+//const BASE_URL = 'http://api:3000/api/projects'
+const BASE_URL = 'http://192.168.84.11:3000/api/projects'
+
 
 /* ------------------------------------------------------------------
    getAllProjets()
@@ -21,7 +24,8 @@ export const getAllProjets = async () => {
     throw new Error(`Erreur serveur : ${response.status}`)
   }
 
-  return response.json() // Parse la réponse JSON et retourne le tableau
+ const result = await response.json()
+ return result.data // Parse la réponse JSON et retourne le tableau
 }
 
 /* ------------------------------------------------------------------
@@ -38,7 +42,8 @@ export const getProjetById = async (id) => {
     throw new Error(`Projet ${id} introuvable`)
   }
 
-  return response.json()
+  const result = await response.json()
+  return result.data
 }
 
 /* ------------------------------------------------------------------
@@ -61,7 +66,8 @@ export const createProjet = async (data) => {
     throw new Error('Échec de la création du projet')
   }
 
-  return response.json() // Retourne le projet avec l'id généré par json-server
+  const result = await response.json()
+  return result.data // Retourne le projet avec l'id généré par json-server
 }
 
 /* ------------------------------------------------------------------
@@ -86,7 +92,8 @@ export const updateProjet = async (id, data) => {
     throw new Error(`Échec de la mise à jour du projet ${id}`)
   }
 
-  return response.json()
+  const result = await response.json()
+  return result.data
 }
 
 /* ------------------------------------------------------------------

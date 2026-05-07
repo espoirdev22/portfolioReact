@@ -14,12 +14,12 @@ function AjouterProjet({ onAjouter, onAnnuler }) {
   // State unique pour tous les champs du formulaire
   // Avantage : un seul state au lieu de 6 useState séparés
   const [form, setForm] = useState({
-    libelle:     '',          // Nom/titre du projet — OBLIGATOIRE
-    description: '',          // Texte descriptif long
-    image:       '',          // URL de l'image d'illustration
-    technologie: '',          // Stack technique (ex: React, Node.js)
-    dateDebut:   '',          // Date au format YYYY-MM-DD (input type="date")
-    statut:      'En cours'   // Valeur par défaut : projet démarré
+    titre:        '',
+    description:  '',
+    image:        '',
+    technologies: '',
+    dateDebut:    '',
+    statut:       'en cours'
   })
 
   /* Gestionnaire générique pour tous les champs
@@ -37,12 +37,15 @@ function AjouterProjet({ onAjouter, onAnnuler }) {
     e.preventDefault()                            // Empêche le rechargement de la page (comportement natif des forms)
 
     // Validation : le libellé est le seul champ obligatoire
-    if (!form.libelle.trim()) {                   // trim() supprime les espaces avant/après
+    if (!form.titre.trim()) {                   // trim() supprime les espaces avant/après
       alert('Le libellé du projet est obligatoire.')
       return                                      // Arrête l'exécution si invalide
     }
 
-    onAjouter(form)                               // Remonte les données au composant Dossier
+    onAjouter({
+      ...form,
+      technologies: form.technologies.split(',').map(t => t.trim()).filter(Boolean)
+    })                               // Remonte les données au composant Dossier
   }
 
   return (
@@ -60,9 +63,9 @@ function AjouterProjet({ onAjouter, onAnnuler }) {
         <div className="form-group">
           <label htmlFor="libelle">Libellé du projet *</label>
           <input
-            id="libelle"
-            name="libelle"                        // Correspond à la clé dans le state form
-            value={form.libelle}                  // Valeur contrôlée par le state
+            id="titre"
+            name="titre"                        // Correspond à la clé dans le state form
+            value={form.titre}                  // Valeur contrôlée par le state
             onChange={handleChange}               // Met à jour le state à chaque frappe
             placeholder="Ex : Portfolio Personnel"
             required                              // Validation HTML native (double protection)
@@ -99,9 +102,9 @@ function AjouterProjet({ onAjouter, onAnnuler }) {
         <div className="form-group">
           <label htmlFor="technologie">Technologies</label>
           <input
-            id="technologie"
-            name="technologie"
-            value={form.technologie}
+            id="technologies"
+            name="technologies"
+            value={form.technologies}
             onChange={handleChange}
             placeholder="React, Node.js, MongoDB..."
           />
@@ -128,9 +131,9 @@ function AjouterProjet({ onAjouter, onAnnuler }) {
             value={form.statut}                   // Pré-sélectionne "En cours" (valeur initiale)
             onChange={handleChange}
           >
-            <option value="En cours">En cours</option>
-            <option value="Terminé">Terminé</option>
-            <option value="En pause">En pause</option>
+            <option value="en cours">En cours</option>
+            <option value="terminé">Terminé</option>
+            <option value="archivé">Archivé</option>
           </select>
         </div>
 

@@ -98,10 +98,8 @@ function Dossier() {
 
       // Mise à jour optimiste du state local : filter exclut le projet supprimé
       // Évite un rechargement complet de la liste
-      setProjets(prev => prev.filter(p => p.id !== id))
-
-      // Si on supprime le projet actuellement affiché → retour à la liste
-      if (projetActif && projetActif.id === id) {
+      setProjets(prev => prev.filter(p => p._id !== id))
+      if (projetActif && projetActif._id === id) {
         setVue('liste')
         setProjetActif(null)
       }
@@ -125,7 +123,7 @@ function Dossier() {
       setProjets(prev => [...prev, nouveau])   // Spread : copie + ajout en fin de tableau
 
       setVue('liste')                          // Retour automatique à la liste
-      afficherToast(`"${nouveau.libelle}" ajouté ✓`)
+      afficherToast(`"${nouveau.titre}" ajouté ✓`)
     } catch (err) {
       setErreur("Erreur lors de l'ajout du projet.")
       console.error('Erreur ajout:', err)
@@ -148,7 +146,7 @@ function Dossier() {
       // Met à jour projetActif pour que la vue détail affiche les nouvelles données
       setProjetActif(misAJour)
 
-      afficherToast(`"${data.libelle}" mis à jour ✓`)
+      afficherToast(`"${data.titre}" mis à jour ✓`)
     } catch (err) {
       setErreur('Erreur lors de la mise à jour.')
       console.error('Erreur mise à jour:', err)
@@ -163,9 +161,9 @@ function Dossier() {
   const projetsFiltres = projets.filter(p => {
     const terme = recherche.toLowerCase()
     return (
-      (p.libelle     && p.libelle.toLowerCase().includes(terme)) ||
+      (p.titre     && p.titre.toLowerCase().includes(terme)) ||
       (p.description && p.description.toLowerCase().includes(terme)) ||
-      (p.technologie && p.technologie.toLowerCase().includes(terme))
+      (p.technologie && p.technologies.toLowerCase().includes(terme))
     )
   })
 
@@ -175,7 +173,7 @@ function Dossier() {
   const titresVue = {
     liste:  `Portfolio (${projetsFiltres.length})`,
     ajout:  'Nouveau Projet',
-    detail: projetActif ? projetActif.libelle : 'Détail'
+    detail: projetActif ? projetActif.titre : 'Détail'
   }
 
   /* ========================================================
